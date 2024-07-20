@@ -1,15 +1,11 @@
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, FormEvent, useContext } from "react";
 import styles from "./styles.module.scss";
-
-type Task = {
-  id: number;
-  title: string;
-  done: boolean;
-};
+import { TasksContext } from "../../context/TasksContext";
 
 export const Tasks: React.FC = () => {
   const [taskTitle, setTaskTitle] = useState("");
-  const [tasks, setTasks] = useState([] as Task[]);
+
+  const { tasks, setTasks } = useContext(TasksContext);
 
   function handleSubmitAddTask(event: FormEvent) {
     event.preventDefault();
@@ -18,6 +14,7 @@ export const Tasks: React.FC = () => {
       alert("ENTER A VALID TASK");
       return;
     }
+
     const newTasks = [
       { id: new Date().getTime(), title: taskTitle, done: false },
       ...tasks,
@@ -28,13 +25,27 @@ export const Tasks: React.FC = () => {
     setTaskTitle("");
   }
 
-  useEffect(() => {
-    const taskOnLocalStorage = localStorage.getItem("tasks");
+  function handleToggleTaskStatus(taskId: number) {
+    const newTasks = tasks.map((task) => {
+      if (taskId === task.id) {
+        return {
+          ...task,
+          done: !task.done,
+        };
+      }
+      return task;
+    });
 
-    if (taskOnLocalStorage) {
-      setTasks(JSON.parse(taskOnLocalStorage));
-    }
-  }, []);
+    setTasks(newTasks);
+    localStorage.setItem("tasks", JSON.stringify(newTasks));
+  }
+
+  function handleDeleteTask(taskId: number) {
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+
+    setTasks(newTasks);
+    localStorage.setItem("tasks", JSON.stringify(newTasks));
+  }
 
   return (
     <section className={styles.container}>
@@ -49,14 +60,25 @@ export const Tasks: React.FC = () => {
             placeholder="Task to add..."
           />
         </div>
-        <button type="submit">ADD</button> {/* Fixed type attribute */}
+        <button type="submit">ADD</button>
       </form>
       <ul>
         {tasks.map((task) => {
           return (
             <li key={task.id}>
-              <input type="checkbox" id={`task-${task.id}`} />
-              <label htmlFor={`task-${task.id}`}>{task.title}</label>
+              <input
+                type="checkbox"
+                id={`task-${task.id}`}
+                checked={task.done}
+                onChange={() => handleToggleTaskStatus(task.id)}
+              />
+              <label
+                htmlFor={`task-${task.id}`}
+                className={task.done ? styles.done : ""}
+              >
+                {task.title}
+              </label>
+              <button onClick={() => handleDeleteTask(task.id)}>DELETE</button>
             </li>
           );
         })}

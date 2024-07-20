@@ -1,10 +1,18 @@
+import { TasksContext } from "../../context/TasksContext";
 import { StatsCard } from "../StatsCard/StatsCard";
 import styles from "./styles.module.scss";
 
-import { useState } from "react";
+import { useContext } from "react";
 
 export const Header: React.FC = () => {
-  const [counter, setCounter] = useState(0);
+  const { tasks } = useContext(TasksContext);
+  const totalTasks = tasks.length;
+  const totalPending = tasks.reduce((total, task) => {
+    if (!task.done) return total + 1;
+    return total;
+  }, 0);
+  const totalDone = totalTasks - totalPending;
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -13,9 +21,9 @@ export const Header: React.FC = () => {
           <span>Welcome stranger</span>
         </div>
         <div>
-          <StatsCard title="Total de tarefas" value={counter} />
-          <StatsCard title="Tarefas pendentes" value={counter} />
-          <StatsCard title="Tarefas concluidas" value={counter} />
+          <StatsCard title="Total de tarefas" value={totalTasks} />
+          <StatsCard title="Tarefas pendentes" value={totalPending} />
+          <StatsCard title="Tarefas concluidas" value={totalDone} />
         </div>
       </div>
     </header>

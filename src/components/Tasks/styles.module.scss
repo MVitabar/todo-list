@@ -2,6 +2,8 @@
   max-width: 1240px;
   padding: 0 2rem;
   margin: 7rem auto 0;
+  background-color: rgb(197, 197, 197);
+  border-radius: 25px;
 
   form {
     display: flex;
@@ -51,6 +53,7 @@
     margin-top: 1rem;
 
     li {
+      background-color: rgb(231, 229, 229);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -58,6 +61,7 @@
       border: 2px solid gray;
       border-radius: 5px;
       margin: 5px auto;
+      justify-content: space-between;
 
       input {
         height: 1rem;
@@ -67,6 +71,18 @@
       label {
         font-size: 1.5rem;
       }
+
+      button {
+        background-color: blueviolet;
+        border: none;
+        border-radius: 25%;
+        color: white;
+        padding: 0.3rem;
+      }
     }
   }
+}
+
+.done {
+  text-decoration: line-through;
 }
